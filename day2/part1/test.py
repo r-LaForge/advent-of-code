@@ -1,6 +1,6 @@
 import unittest
 
-from day2.part1.implementation import checksum_clear
+from implementation import checksum_clear
 
 
 class Day2Tests(unittest.TestCase):

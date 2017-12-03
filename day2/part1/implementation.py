@@ -8,7 +8,7 @@ def checksum_clear(i):
     for row in i:
         smallest = min(row)
         largest = max(row)
-        difference = largest - smallest
+        difference = abs(largest - smallest)
         total += difference
     return total
 
