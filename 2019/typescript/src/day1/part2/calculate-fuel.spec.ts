@@ -1,9 +1,9 @@
-import {calculateFuelForModuleMassesAndFuel} from './calculate-fuel';
+import {computeFuelForModuleMassesAndFuel} from './calculate-fuel';
 import {ADVENT_DAY_2_PART_2_INPUT} from './test-input';
 
 describe('calculateFuelForModuleMassesAndFuel', () => {
   test('should return 0 if given an empty array', () => {
-    expect(calculateFuelForModuleMassesAndFuel([])).toBe(0);
+    expect(computeFuelForModuleMassesAndFuel([])).toBe(0);
   });
 
   describe('for a single module mass', () => {
@@ -16,7 +16,7 @@ describe('calculateFuelForModuleMassesAndFuel', () => {
     testCases.forEach(t => {
       it('should correctly compute the required fuel', () => {
         try {
-          expect(calculateFuelForModuleMassesAndFuel([t.mass])).toEqual(t.expected);
+          expect(computeFuelForModuleMassesAndFuel([t.mass])).toEqual(t.expected);
         } catch (e) {
           fail(`failed on test: ${JSON.stringify(t)} > ${e}`);
         }
@@ -26,12 +26,12 @@ describe('calculateFuelForModuleMassesAndFuel', () => {
 
   describe('for multiple masses', () => {
     it('should compute 51316 fuel when given modules with masses 12, 14, 1969, 100756', () => {
-      expect(calculateFuelForModuleMassesAndFuel([12, 14, 1969, 100756])).toEqual(51316);
+      expect(computeFuelForModuleMassesAndFuel([12, 14, 1969, 100756])).toEqual(51316);
     });
   });
 
   test('determine advent input', () => {
-    const answer = calculateFuelForModuleMassesAndFuel(ADVENT_DAY_2_PART_2_INPUT);
+    const answer = computeFuelForModuleMassesAndFuel(ADVENT_DAY_2_PART_2_INPUT);
     expect(answer).toBeDefined();
     console.log(`advent day 1 part 2 answer: ${answer}`);
   });

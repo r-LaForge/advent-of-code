@@ -1,4 +1,5 @@
-export function calculateFuelForModuleMassesAndFuel(masses: number[]): number {
+// https://adventofcode.com/2019/day/1
+export function computeFuelForModuleMassesAndFuel(masses: number[]): number {
   return (masses || []).reduce((totalFuel, mass) => {
     return totalFuel + computeFuelForMass(mass);
   }, 0);
