@@ -103,3 +103,6 @@ ENV/
 
 # IntelliJ Stuff
 .idea
+
+# Typescript / JS stuff
+**/node_modules/**
