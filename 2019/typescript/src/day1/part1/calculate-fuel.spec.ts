@@ -1,7 +1,7 @@
 import {calculateFuelForModuleMasses} from './calculate-fuel';
-import {ADVENT_INPUT} from './test-input';
+import {ADVENT_DAY_1_PART_1_INPUT} from './test-input';
 
-describe('calculateFuelForModuleMasses', () => {
+describe('calculateFuelForModuleMasses part1 tests', () => {
   test('should return 0 if given an empty array', () => {
     expect(calculateFuelForModuleMasses([])).toBe(0);
   });
@@ -32,8 +32,8 @@ describe('calculateFuelForModuleMasses', () => {
   });
 
   test('determine advent input', () => {
-    const answer = calculateFuelForModuleMasses(ADVENT_INPUT);
+    const answer = calculateFuelForModuleMasses(ADVENT_DAY_1_PART_1_INPUT);
     expect(answer).toBeDefined();
-    console.log(`advent answer: ${answer}`);
+    console.log(`advent day 1 part 1 answer: ${answer}`);
   });
 });

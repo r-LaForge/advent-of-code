@@ -1,4 +1,4 @@
-export const ADVENT_DAY_1_PART_1_INPUT = [
+export const ADVENT_DAY_2_PART_2_INPUT = [
   114739,
   132732,
   123925,
