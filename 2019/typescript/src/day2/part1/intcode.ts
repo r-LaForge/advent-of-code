@@ -2,31 +2,32 @@
 // does not modify original program
 export function intCodeProgram(input: number[]): number[] {
   const program = [...input];
-  let currentPosition = 0;
-  while (currentPosition < program.length) {
-    const intCode = program[currentPosition];
+  let instructionPointer = 0;
+  while (instructionPointer < program.length) {
+    const intCode = program[instructionPointer];
     switch (intCode) {
       case 1:
-        applyOperation(program, currentPosition, (i1, i2) => i1 + i2);
+        runInstruction(program, instructionPointer, (i1, i2) => i1 + i2);
         break;
       case 2:
-        applyOperation(program, currentPosition, (i1, i2) => i1 * i2);
+        runInstruction(program, instructionPointer, (i1, i2) => i1 * i2);
         break;
       case 99:
         return program;
       default:
-        throw new Error(`encountered bad intCode: ${intCode} at position ${currentPosition}`);
+        throw new Error(`encountered bad intCode: ${intCode} at position ${instructionPointer}`);
     }
-    currentPosition += 4;
+    instructionPointer += 4;
   }
   return program;
 }
 
-function applyOperation(program: number[], currentPosition: number, op: (i1: number, i2: number) => number): void {
-  const outputPosition = program[currentPosition + 3];
-  const input1Position = program[currentPosition + 1];
-  const input2Position = program[currentPosition + 2];
+type Instruction = (i1: number, i2: number) => number;
+function runInstruction(program: number[], instructionPointer: number, instruction: Instruction): void {
+  const outputPosition = program[instructionPointer + 3];
+  const input1Position = program[instructionPointer + 1];
+  const input2Position = program[instructionPointer + 2];
   const input1 = program[input1Position];
   const input2 = program[input2Position];
-  program[outputPosition] = op(input1, input2);
+  program[outputPosition] = instruction(input1, input2);
 }
