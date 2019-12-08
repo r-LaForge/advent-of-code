@@ -4,6 +4,14 @@ import {
 } from '../shared';
 import {Line, Point} from '../interface';
 
+// https://adventofcode.com/2019/day/3
+/*
+ * Transform movements into lines on a grid
+ * Find all coordinates that both wires intercept
+ * Calculate the minimum number of steps required for both wires to reach that point
+ * (count distances between points in all lines up until the one that inercepts. Then just add the steps required on that
+ * line to intercept the coordinate).
+ */
 export function calculateClosestInterceptionByTotalWireSteps(firstMovements: string[], secondMovements: string[]): number {
   const firstLines = transformMovementsIntoLines(firstMovements);
   const secondLines = transformMovementsIntoLines(secondMovements);
