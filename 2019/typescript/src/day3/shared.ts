@@ -1,38 +1,4 @@
-// https://adventofcode.com/2019/day/3https://adventofcode.com/2019/day/3
-
-/* Assume central point is the origin on a two-dimensional plane
- * Translate every input into a point on a two-dimensional plane.
- * Separate lines into horizontal and vertical lists.
- * Find all intercepting lines and collision point
- * Determine all manhattan distances from center to collision point
- * Pick minimum
- */
-export interface Point {
-  x: number;
-  y: number;
-}
-
-export interface Line {
-  p1: Point;
-  p2: Point;
-}
-
-export interface VerticalAndHorizontalLines {
-  horizontal: Line[];
-  vertical: Line[];
-}
-
-export function calculateClosestLintInterception(firstWireMovements: string[], secondWireMovements: string[]): number {
-  const firstLines = getHorizontalAndVerticalLinesFromMovements(firstWireMovements);
-  const secondLines = getHorizontalAndVerticalLinesFromMovements(secondWireMovements);
-
-  const crossingCoordinates = filterOutOrigin([
-    ...getCrossingCoordinates({horizontal: firstLines.horizontal, vertical: secondLines.vertical}),
-    ...getCrossingCoordinates({horizontal: secondLines.horizontal, vertical: firstLines.vertical}),
-  ]);
-
-  return getMinimumManhattenDistanceFromOrigin(crossingCoordinates);
-}
+import {Line, Point, VerticalAndHorizontalLines} from './interface';
 
 export function getHorizontalAndVerticalLinesFromMovements(movements: string[]): VerticalAndHorizontalLines {
   return separateLinesIntoVerticalAndHorizontal(transformMovementsIntoLines(movements));
@@ -91,15 +57,9 @@ export function getCrossingCoordinates({horizontal, vertical}: VerticalAndHorizo
 
   return crossingCoordinates;
 }
+
 export function filterOutOrigin(points: Point[]): Point[] {
   return points.filter(p => !(p.x === 0 && p.y === 0));
-}
-
-export function getMinimumManhattenDistanceFromOrigin(points: Point[]): number {
-  const distances = points.map(p => Math.abs(p.x) + Math.abs(p.y));
-  return Math.min(
-    ...distances,
-  );
 }
 
 /* Determining if the lines cross
