@@ -1,4 +1,8 @@
-import {Line, transformMovementsIntoLines} from './calculate-closest-interception';
+import {
+  Line,
+  separateLinesIntoVerticalAndHorizontal,
+  transformMovementsIntoLines,
+} from './calculate-closest-interception';
 
 describe('transformMovementsIntoLines', () => {
   describe('when given a single movement', () => {
@@ -49,5 +53,36 @@ describe('transformMovementsIntoLines', () => {
         }
       });
     });
+  });
+});
+
+
+describe('separateLinesIntoVerticalAndHorizontal', () => {
+  it('should properly separate vertical and horizontal lines', () => {
+    const horizontal: Line[] = [
+      {p1: {x: 0, y: 0}, p2: {x: 10, y: 0}},
+      {p1: {x: 10, y: 10}, p2: {x: 0, y: 10}},
+    ];
+
+    const vertical: Line[] = [
+      {p1: {x: 0, y: 0}, p2: {x: 0, y: 10}},
+      {p1: {x: 10, y: 10}, p2: {x: 10, y: 0}},
+    ];
+
+    const neither: Line[] = [
+      {p1: {x: 12, y: 15}, p2: {x: 9, y: 17}},
+      {p1: {x: 10, y: 15}, p2: {x: 7, y: 17}},
+    ];
+
+    const allLines = [...vertical, ...neither, ...horizontal];
+
+    const expected = {
+      horizontal,
+      vertical,
+    };
+
+    const actual = separateLinesIntoVerticalAndHorizontal(allLines);
+
+    expect(actual).toEqual(expected);
   });
 });

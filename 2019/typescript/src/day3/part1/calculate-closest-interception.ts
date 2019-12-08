@@ -69,8 +69,8 @@ function transformMovementIntoLine(startingPosition: Point, movement: string): L
 
 export function separateLinesIntoVerticalAndHorizontal(lines: Line[]): { horizontal: Line[], vertical: Line[] } {
   return {
-    horizontal: [],
-    vertical: [],
+    horizontal: lines.filter(l => l.p1.y === l.p2.y),
+    vertical: lines.filter(l => l.p1.x === l.p2.x),
   };
 }
 
