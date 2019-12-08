@@ -26,10 +26,10 @@ export function calculateClosestLintInterception(firstWireMovements: string[], s
   const firstLines = getHorizontalAndVerticalLinesFromMovements(firstWireMovements);
   const secondLines = getHorizontalAndVerticalLinesFromMovements(secondWireMovements);
 
-  const crossingCoordinates = [
+  const crossingCoordinates = filterOutOrigin([
     ...getCrossingCoordinates({horizontal: firstLines.horizontal, vertical: secondLines.vertical}),
     ...getCrossingCoordinates({horizontal: secondLines.horizontal, vertical: firstLines.vertical}),
-  ];
+  ]);
 
   return getMinimumManhattenDistanceFromOrigin(crossingCoordinates);
 }
@@ -75,11 +75,31 @@ export function separateLinesIntoVerticalAndHorizontal(lines: Line[]): { horizon
 }
 
 export function getCrossingCoordinates({horizontal, vertical}: VerticalAndHorizontalLines): Point[] {
-  return [];
+  if (horizontal.length === 0 || vertical.length === 0) {
+    return [];
+  }
+
+  const crossingCoordinates: Point[] = [];
+
+  horizontal.forEach(h => {
+    vertical.forEach(v => {
+      if (doesHorizontalLineCrossVerticalLine({horizontal: h, vertical: v})) {
+        crossingCoordinates.push({x: v.p1.x, y: h.p1.y});
+      }
+    });
+  });
+
+  return crossingCoordinates;
+}
+export function filterOutOrigin(points: Point[]): Point[] {
+  return points.filter(p => !(p.x === 0 && p.y === 0));
 }
 
 export function getMinimumManhattenDistanceFromOrigin(points: Point[]): number {
-  return -Infinity;
+  const distances = points.map(p => Math.abs(p.x) + Math.abs(p.y));
+  return Math.min(
+    ...distances,
+  );
 }
 
 /* Determining if the lines cross
@@ -89,15 +109,14 @@ export function getMinimumManhattenDistanceFromOrigin(points: Point[]): number {
  * horizontal y must be in-between vertical line y coordinates
  */
 function doesHorizontalLineCrossVerticalLine({horizontal, vertical}: { horizontal: Line, vertical: Line }): boolean {
-  return [
-    // Horizontal line crosses the vertical line at point vertical.p1.x
-    // x-coordinate does is the same for a vertical line
-    horizontal.p1.x <= vertical.p1.x,
-    horizontal.p2.x >= vertical.p1.x,
+  const verticalX = vertical.p1.x;
+  const horizontalY = horizontal.p1.y;
 
-    // Horiztonal line crosses vertical line at horizontal.p1.y
-    // y-coordinate is the same for a horizontal line. Using min / max because we do not know what coordinate is greater
-    horizontal.p1.y >= Math.min(vertical.p1.y, vertical.p2.y),
-    horizontal.p1.y <= Math.min(vertical.p1.y, vertical.p2.y),
-  ].every(Boolean);
+  const matchesHorizontalCrossing = Math.min(horizontal.p1.x, horizontal.p2.x) <= verticalX
+    && Math.max(horizontal.p1.x, horizontal.p2.x) >= verticalX;
+
+  const matchesVerticalCrossing = Math.min(vertical.p1.y, vertical.p2.y) <= horizontalY
+    && Math.max(vertical.p1.y, vertical.p2.y) >= horizontalY;
+
+  return matchesHorizontalCrossing && matchesVerticalCrossing;
 }
