@@ -3,6 +3,7 @@ import {
   calculateClosestInterceptionByTotalWireSteps,
   getMinimumStepsToPointFromLines,
 } from './calculate-closest-interception-by-total-write-steps';
+import {ADVENT_DAY_3_INPUT} from '../test_input';
 
 describe('getMinimumStepsToPointFromLines', () => {
   it('should return 15 for lines (0,0),(8,0) (8,0),(8, 5) (8.5),(3,5) (3,5),(3,2) and interception (6,5)', () => {
@@ -71,5 +72,11 @@ describe('calculateClosestInterceptionByTotalWireSteps', () => {
     const wire2 = ['U98', 'R91', 'D20', 'R16', 'D67', 'R40', 'U7', 'R15', 'U6', 'R7'];
 
     expect(calculateClosestInterceptionByTotalWireSteps(wire1, wire2)).toEqual(410);
+  });
+
+  test('advent of code answer', () => {
+    const result = calculateClosestInterceptionByTotalWireSteps(ADVENT_DAY_3_INPUT.wire1, ADVENT_DAY_3_INPUT.wire2);
+    expect(result).toBeDefined();
+    console.log(`advent day 3 part 2 answer: ${result}`);
   });
 });

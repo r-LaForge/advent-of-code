@@ -2,7 +2,7 @@ import {
   calculateClosestInterceptionByManhattenDistance,
   getMinimumManhattenDistanceFromOrigin,
 } from './calculate-closest-interception-by-manhattan';
-import {ADVENT_DAY_3_PART_1_INPUT} from './test_input';
+import {ADVENT_DAY_3_INPUT} from '../test_input';
 
 describe('getMinimumManhattenDistanceFromOrigin', () => {
   it('should return the the minimum manhattan distance of 4', () => {
@@ -42,8 +42,8 @@ describe('calculateClosestLintInterception', () => {
 
   test('get answer to advent', () => {
     const result = calculateClosestInterceptionByManhattenDistance(
-      ADVENT_DAY_3_PART_1_INPUT.wire1,
-      ADVENT_DAY_3_PART_1_INPUT.wire2,
+      ADVENT_DAY_3_INPUT.wire1,
+      ADVENT_DAY_3_INPUT.wire2,
     );
     expect(result).toBeDefined();
 

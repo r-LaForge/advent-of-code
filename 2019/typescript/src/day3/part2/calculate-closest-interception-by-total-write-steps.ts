@@ -1,23 +1,25 @@
 import {
   filterOutOrigin, getCrossingCoordinates,
-  getHorizontalAndVerticalLinesFromMovements,
+  separateLinesIntoVerticalAndHorizontal, transformMovementsIntoLines,
 } from '../shared';
 import {Line, Point} from '../interface';
 
 export function calculateClosestInterceptionByTotalWireSteps(firstMovements: string[], secondMovements: string[]): number {
-  const firstLines = getHorizontalAndVerticalLinesFromMovements(firstMovements);
-  const secondLines = getHorizontalAndVerticalLinesFromMovements(secondMovements);
+  const firstLines = transformMovementsIntoLines(firstMovements);
+  const secondLines = transformMovementsIntoLines(secondMovements);
+
+  const firstSplitLines = separateLinesIntoVerticalAndHorizontal(firstLines);
+  const secondSplitLines = separateLinesIntoVerticalAndHorizontal(secondLines);
 
   const crossingCoordinates = filterOutOrigin([
-    ...getCrossingCoordinates({horizontal: firstLines.horizontal, vertical: secondLines.vertical}),
-    ...getCrossingCoordinates({horizontal: secondLines.horizontal, vertical: firstLines.vertical}),
+    ...getCrossingCoordinates({horizontal: firstSplitLines.horizontal, vertical: secondSplitLines.vertical}),
+    ...getCrossingCoordinates({horizontal: secondSplitLines.horizontal, vertical: firstSplitLines.vertical}),
   ]);
-  const allFirstLines = [...firstLines.horizontal, ...firstLines.vertical];
-  const allSecondLines = [...secondLines.horizontal, ...secondLines.vertical];
 
+  const distances = crossingCoordinates
+    .map(c => getMinimumStepsToPointFromLines(c, firstLines) + getMinimumStepsToPointFromLines(c, secondLines));
   return Math.min(
-    ...crossingCoordinates
-      .map(c => getMinimumStepsToPointFromLines(c, allFirstLines) + getMinimumStepsToPointFromLines(c, allSecondLines)),
+    ...distances,
   );
 }
 
@@ -31,19 +33,12 @@ export function getMinimumStepsToPointFromLines(point: Point, lines: Line[]): nu
   const indexOfLine = lines.indexOf(firstLineToInterceptPoint);
   const linesBeforeInterception = lines.slice(0, indexOfLine);
   const stepsBeforeInterceptingLine = linesBeforeInterception.reduce((sum, line) => {
-    return sum + getAbsoluteDifference(line.p1.x, line.p2.x) + getAbsoluteDifference(line.p1.y, line.p2.y);
+    const xDistance = Math.abs(line.p1.x - line.p2.x);
+    const yDistance = Math.abs(line.p1.y - line.p2.y);
+    return sum + xDistance + yDistance;
   }, 0);
 
-  let stepsToInterception: number;
-  if (firstLineToInterceptPoint.p1.x === point.x) {
-    stepsToInterception = getAbsoluteDifference(point.y, firstLineToInterceptPoint.p1.y);
-  } else {
-    stepsToInterception = getAbsoluteDifference(point.x, firstLineToInterceptPoint.p1.x);
-  }
+  const stepsToInterception = Math.abs(point.y - firstLineToInterceptPoint.p1.y) + Math.abs(point.x - firstLineToInterceptPoint.p1.x);
 
   return stepsBeforeInterceptingLine + stepsToInterception;
-}
-
-function getAbsoluteDifference(num1: number, num2: number) {
-  return Math.abs(Math.abs(num1) - Math.abs(num2));
 }
