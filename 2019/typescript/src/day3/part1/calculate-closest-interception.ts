@@ -23,15 +23,12 @@ export interface VerticalAndHorizontalLines {
 }
 
 export function calculateClosestLintInterception(firstWireMovements: string[], secondWireMovements: string[]): number {
-  const firstLines = transformMovementsIntoLines(firstWireMovements);
-  const secondLines = transformMovementsIntoLines(secondWireMovements);
-
-  const firstSeparatedLines = separateLinesIntoVerticalAndHorizontal(firstLines);
-  const secondSeparatedLines = separateLinesIntoVerticalAndHorizontal(secondLines);
+  const firstLines = getHorizontalAndVerticalLinesFromMovements(firstWireMovements);
+  const secondLines = getHorizontalAndVerticalLinesFromMovements(secondWireMovements);
 
   const crossingCoordinates = [
-    ...getCrossingCoordinates({horizontal: firstSeparatedLines.horizontal, vertical: secondSeparatedLines.vertical}),
-    ...getCrossingCoordinates({horizontal: secondSeparatedLines.horizontal, vertical: firstSeparatedLines.vertical}),
+    ...getCrossingCoordinates({horizontal: firstLines.horizontal, vertical: secondLines.vertical}),
+    ...getCrossingCoordinates({horizontal: secondLines.horizontal, vertical: firstLines.vertical}),
   ];
 
   return getMinimumManhattenDistanceFromOrigin(crossingCoordinates);
@@ -42,7 +39,32 @@ export function getHorizontalAndVerticalLinesFromMovements(movements: string[]):
 }
 
 export function transformMovementsIntoLines(movements: string[]): Line[] {
-  return [];
+  let currentPosition: Point = {x: 0, y: 0};
+  const lines = [];
+
+  for (const movement of movements) {
+    const line = transformMovementIntoLine(currentPosition, movement);
+    currentPosition = line.p2;
+    lines.push(line);
+  }
+  return lines;
+}
+
+function transformMovementIntoLine(startingPosition: Point, movement: string): Line {
+  const direction = movement[0].toUpperCase();
+  const spacesMoved = Number(movement.slice(1));
+
+  switch (direction) {
+    case 'R':
+      return {p1: startingPosition, p2: {x: startingPosition.x + spacesMoved, y: startingPosition.y}};
+    case 'L':
+      return {p1: startingPosition, p2: {x: startingPosition.x - spacesMoved, y: startingPosition.y}};
+    case 'U':
+      return {p1: startingPosition, p2: {x: startingPosition.x, y: startingPosition.y + spacesMoved}};
+    case 'D':
+      return {p1: startingPosition, p2: {x: startingPosition.x, y: startingPosition.y - spacesMoved}};
+  }
+  throw new Error(`movement ${movement} is invalid. Must start with one of [R,L,D,U] and end with a number`);
 }
 
 export function separateLinesIntoVerticalAndHorizontal(lines: Line[]): { horizontal: Line[], vertical: Line[] } {
