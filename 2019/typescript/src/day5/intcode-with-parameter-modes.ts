@@ -23,8 +23,8 @@
  * Every input provided (when needed) will be 0.
 */
 
-
-import {commandMap, IntCodeCommand, OpCode} from './commands';
+import {IntCodeCommand} from './commands';
+import {commandMap, OpCode, requiredParamLengthForOpCodeMap} from './interface';
 
 // Returns the diagnostic codes from the program as an array.
 export function intCodeWithParameterModes(inputProgram: number[]): number[] {
@@ -52,28 +52,55 @@ export function intCodeWithParameterModes(inputProgram: number[]): number[] {
 
 function getCommandFromInstruction(instruction: number[]): IntCodeCommand | undefined {
   const instructionPointer = instruction[0];
-  const ipString = instructionPointer.toString();
-  const opCode = Number(ipString.slice(ipString.length - 2, ipString.length)) as OpCode;
+  const opCode = getOpCodeFromInstructionPointer(instructionPointer);
   return commandMap.get(opCode);
 }
 
 function getParamsFromInstruction(inputProgram: number[], instruction: number[]): number[] {
   const paramModes = instruction
-    .slice(0, instruction.length - 2)
-    .reverse();
+    .slice(0, instruction.length - 2);
   const paramsWithMode = zipParamsAndParamModesTogether(paramModes, instruction.slice(1, instruction.length));
   return getParamsFromProgramAndMode(paramsWithMode, inputProgram);
 }
 
-function splitProgramIntoInstructions(arr: any[]): any[] {
-  // TODO
-  return [];
+function splitProgramIntoInstructions(arr: number[]): any[] {
+  let position = 0;
+  const instructions: number[][] = [];
+  while (position < arr.length) {
+    const opCode = getOpCodeFromInstructionPointer(arr[position]);
+    const numberOfParameters = requiredParamLengthForOpCodeMap.get(opCode) || 0;
+    instructions.push(arr.slice(position, position + numberOfParameters));
+    position = position + numberOfParameters + 1;
+  }
+  return instructions;
 }
 
-function zipParamsAndParamModesTogether(paramModes: number[], params: number[]): { param: number, mode: number }[] {
-  return [];
+function getOpCodeFromInstructionPointer(instructionPointer: number): number {
+  const ipString = instructionPointer.toString();
+  return Number(ipString.slice(ipString.length - 2, ipString.length)) as OpCode;
 }
 
-function getParamsFromProgramAndMode(paramsWithMode: { param: number, mode: number }[], program: number[]): number[] {
-  return [];
+function zipParamsAndParamModesTogether(paramModes: number[], params: number[]): Array<{ param: number, mode: number}> {
+  // reverse because they are read from right to left
+  const reversedParamModes = paramModes.reverse();
+  return params.reduce((arr: Array<{param: number, mode: number}>, param, index) => {
+    return [...arr, {param, mode: reversedParamModes[index]}];
+  }, []);
+}
+
+function getParamsFromProgramAndMode(paramsWithMode: Array<{ param: number, mode: number }>, program: number[]): number[] {
+  return paramsWithMode.reduce((params: number[], paramWithMode) => {
+    let param: number;
+    switch (paramWithMode.mode) {
+      case 0:
+        param = program[paramWithMode.param];
+        break;
+      case 1:
+        param = paramWithMode.param;
+        break;
+      default:
+        throw new Error(`invalid mode: ${paramWithMode.mode}`);
+    }
+    return [...params, param];
+  }, []);
 }

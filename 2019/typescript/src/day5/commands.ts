@@ -2,21 +2,6 @@ export interface IntCodeCommand {
   run(program: number[], ...args: number[]): { abort?: boolean, output?: number } | void;
 }
 
-export enum OpCode {
-  ADD = 1,
-  MULTIPLY = 2,
-  SAVE_TO_ADDRESS = 3,
-  OUTPUT_PARAMETER = 4,
-  HALT = 99,
-}
-
-export const commandMap = new Map<OpCode, IntCodeCommand>();
-commandMap.set(OpCode.ADD, new IntCodeCommands.Add());
-commandMap.set(OpCode.MULTIPLY, new IntCodeCommands.Multiply());
-commandMap.set(OpCode.SAVE_TO_ADDRESS, new IntCodeCommands.SaveToAddress());
-commandMap.set(OpCode.OUTPUT_PARAMETER, new IntCodeCommands.Output());
-commandMap.set(OpCode.HALT, new IntCodeCommands.Abort());
-
 export namespace IntCodeCommands {
   export class Add implements IntCodeCommand {
     public run(program: number[], ...args: number[]): void {
